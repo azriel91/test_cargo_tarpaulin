@@ -1,0 +1,37 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '**'
+
+name: CI
+
+jobs:
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+
+      - uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-tarpaulin
+          version: latest
+          use-tool-cache: true
+
+      - name: 'Run `cargo-tarpaulin`'
+        uses: actions-rs/cargo@v1
+        with:
+          command: tarpaulin
+          args: --workspace --run-types Tests --out Xml
+
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v1
