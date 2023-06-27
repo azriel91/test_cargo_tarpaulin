@@ -14,12 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
 
       - uses: actions-rs/install@v0.1
         with:
@@ -28,10 +24,7 @@ jobs:
           use-tool-cache: true
 
       - name: 'Run `cargo-tarpaulin`'
-        uses: actions-rs/cargo@v1
-        with:
-          command: tarpaulin
-          args: --workspace --run-types Tests --out Xml
+        run: cargo tarpaulin --workspace --run-types Tests --out Xml
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v1
